@@ -1,63 +1,80 @@
-import { randomUUID } from "crypto";
-import { Replace } from "src/helpers/replace";
-import { Content } from "./content";
+import { randomUUID } from 'node:crypto';
+import { Replace } from '../../helpers/Replace';
+import { Content } from './content';
 
-export interface NotificationData{
-    recipientId: string;
-    content:  Content;
-    category: string;
-    readAt?: Date | null;
-    createdAt: Date;
+export interface NotificationData {
+  recipientId: string;
+  content: Content;
+  category: string;
+  readAt?: Date | null;
+  canceledAt?: Date | null;
+  createdAt: Date;
 }
 
 export class Notification {
-    private _id: string;
-    private data: NotificationData;
+  private _id: string;
+  private props: NotificationData;
 
-    constructor(data: Replace<NotificationData, { createdAt?: Date}>){
-        this._id = randomUUID();
-        this.data = {
-            ...data,
-            createdAt: data.createdAt ?? new Date(),
-        };
-    }
+  constructor(
+    data: Replace<NotificationData, { createdAt?: Date }>,
+    id?: string,
+  ) {
+    this._id = id ?? randomUUID();
+    this.props = {
+      ...data,
+      createdAt: data.createdAt ?? new Date(),
+    };
+  }
 
-    public get id(): string{
-        return this._id;
-    }
+  public get id() {
+    return this._id;
+  }
 
-    public set recipientId (recipientId: string){
-        this.data.recipientId = recipientId;
-    }
+  public set recipientId(recipientId: string) {
+    this.props.recipientId = recipientId;
+  }
 
-    public get recipientId (): string{
-        return this.data.recipientId;
-    }
-    public set content (content: Content){
-        this.data.content = content;
-    }
+  public get recipientId(): string {
+    return this.props.recipientId;
+  }
 
-    public get content (): Content{
-        return this.data.content;
-    }
+  public set content(content: Content) {
+    this.props.content = content;
+  }
 
-    public set category (category: string){
-        this.data.category = category;
-    }
+  public get content(): Content {
+    return this.props.content;
+  }
 
-    public get category (): string{
-        return this.data.category;
-    }
+  public set category(category: string) {
+    this.props.category = category;
+  }
 
-    public set readAt (readAt: Date | null | undefined){
-        this.data.readAt = readAt;
-    }
+  public get category(): string {
+    return this.props.category;
+  }
 
-    public get readAt (): Date | null | undefined {
-        return this.data.readAt;
-    }
+  public read() {
+    this.props.readAt = new Date();
+  }
 
-    public get createdAt (): Date {
-        return this.data.createdAt;
-    }
+  public unread() {
+    this.props.readAt = null;
+  }
+
+  public get readAt(): Date | null | undefined {
+    return this.props.readAt;
+  }
+
+  public cancel() {
+    this.props.canceledAt = new Date();
+  }
+
+  public get canceledAt(): Date | null | undefined {
+    return this.props.canceledAt;
+  }
+
+  public get createdAt(): Date {
+    return this.props.createdAt;
+  }
 }
